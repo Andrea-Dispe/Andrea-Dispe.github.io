@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import Row from 'react-bootstrap/Row';
@@ -61,7 +62,7 @@ const validationSchema = Yup.object({
   yearsToMaturity: Yup.number()
     .required('Cannot be empty')
     .positive('Must be a positive number'),
-    periodsAnnually: Yup.number()
+  periodsAnnually: Yup.number()
     .required('Cannot be empty')
     .positive('Must be a positive number'),
   currentRate: Yup.number()
@@ -71,8 +72,11 @@ const validationSchema = Yup.object({
 
 
 function App() {
+  const [bondValue, setBondValue] = useState<string>("")
+
+
   const submitFnFacotory = (values: FormValues) => {
-    let { parValue, coupon, yearsToMaturity, periodsAnnually,  currentRate } = values;
+    let { parValue, coupon, yearsToMaturity, periodsAnnually, currentRate } = values;
 
     coupon = coupon / 100
     currentRate = currentRate / 100
@@ -81,7 +85,12 @@ function App() {
 
     const finalBondValue = (coupon / periodsAnnually * parValue) * (1 - (1 + currentRate / periodsAnnually) ** (- nPeriods)) / (currentRate / periodsAnnually) + parValue / ((1 + currentRate / periodsAnnually) ** nPeriods)
     // const finalBondValue = couponYearlyPayment * (1 - (1 + currentRate) ** -  n ) / currentRate  + (parValue / (1 + currentRate) ** n)
-    console.log('finalBondValue: ', finalBondValue);
+
+    let euro = new Intl.NumberFormat('it-IT', {
+      style: 'currency',
+      currency: 'EUR',
+    });
+    setBondValue(euro.format(finalBondValue))
 
   }
 
@@ -132,8 +141,8 @@ function App() {
                 return (
 
                   <Form
-                  onSubmit={handleSubmit}
-                  onReset={handleReset}
+                    onSubmit={handleSubmit}
+                    onReset={handleReset}
 
 
                   >
@@ -238,18 +247,34 @@ function App() {
                         </Form.Group>
                       </Col>
 
+
+
                       <Col md={6}>
                         <Stack direction="horizontal" gap={3}>
 
                           <Button variant="dark" type="reset">
                             Reset
                           </Button>
+
                           <Button variant="primary" type="submit" disabled={isSubmitting ? true : false}>
                             Submit
                           </Button>
                         </Stack>
 
                       </Col>
+
+                      <Col xs={12}>
+
+
+                        <div className='pt-5 text-center'>
+                          <h1>Actual Bond Value</h1>
+                          <h4>
+                            {bondValue ? bondValue : 0}
+                          </h4>
+                        </div>
+                      </Col>
+
+
                       {/* </Stack> */}
                     </Row>
                   </Form>
