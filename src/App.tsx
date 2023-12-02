@@ -256,7 +256,11 @@ function App() {
                             Reset
                           </Button>
 
-                          <Button variant="primary" type="submit" disabled={isSubmitting ? true : false}>
+                          <Button
+                          variant="primary"
+                           type="submit"
+                            // disabled={isSubmitting ? true : false}
+                            >
                             Submit
                           </Button>
                         </Stack>
